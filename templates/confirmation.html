@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Confirmation</title>
+</head>
+	<body>
+		{% if confirmed %}
+			<p>Email {{ email }} is confirmed</p>
+		{% else %}
+			<p>Your email was confirmed earlier or you are using wrong confirmation link</p>
+		{% endif %}
+	</body>
+</html>
