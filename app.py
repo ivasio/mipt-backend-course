@@ -1,4 +1,5 @@
 from flask import Flask, session, request, redirect, url_for, render_template
+from config import FLASK_HOST, FLASK_PORT
 import model
 
 app = Flask(__name__)
@@ -47,13 +48,13 @@ def logout():
     return render_template('logout.html')
 
 
-@app.route('/confirm/<token>', methods=['GET'])
-def confirm(token):
-	email = model.confirm_email_by_token(token)
+@app.route('/confirm/<email>/<token>', methods=['GET'])
+def confirm(email, token):
+	email = model.confirm_email(email, token)
 	if email:
 		return render_template('confirmation.html', confirmed=True, email=email)
 	else:
 		return render_template('confirmation.html', confirmed=False)
 
 
-app.run()
+app.run(host=FLASK_HOST, port=FLASK_PORT)
