@@ -18,7 +18,7 @@ def register_user(email):
 	db.set('confirmation_' + email, token)
 
 	with pika.BlockingConnection(pika.ConnectionParameters(host=config.RABBITMQ_HOST, 
-		port=config.RABBITMQ_PORT)) as connection:
+		port=config.RABBITMQ_PORT, retry_delay=2, connection_attempts=10)) as connection:
 		channel = connection.channel()
 		channel.queue_declare(queue='mipt-backend-task')
 		channel.basic_publish(exchange='', routing_key='mipt-backend-task',body=confirmation_link)

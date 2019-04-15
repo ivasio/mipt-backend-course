@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+
+  flask:
+    build: .
+    entrypoint: "python app.py"
+    ports:
+      - "5000:5000"    
+    depends_on:
+      - db
+      - queue
+
+  emailing:
+    build: .
+    entrypoint: "python emailing.py"
+    environment:
+      - EMAILING_SERVICE_PASSWORD=password
+    depends_on:
+      - queue
+
+  db:
+    image: redis
+    restart: always
+
+  queue:
+    image: rabbitmq
+    restart: always
+
+    

@@ -1,3 +1,4 @@
+import os
 import pika
 import smtplib
 import config
@@ -27,8 +28,9 @@ def send_email(ch, method, properties, body):
 
 
 def main():
+	print("Starting emailing microservice")
 	with pika.BlockingConnection(pika.ConnectionParameters(host=config.RABBITMQ_HOST, 
-		port=config.RABBITMQ_PORT)) as connection:
+		port=config.RABBITMQ_PORT, retry_delay=2, connection_attempts=10)) as connection:
 		channel = connection.channel()
 		channel.queue_declare(queue='mipt-backend-task')
 		channel.basic_consume('mipt-backend-task', send_email, auto_ack=True)
