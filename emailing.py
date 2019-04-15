@@ -20,7 +20,7 @@ def send_email(ch, method, properties, body):
 	context = ssl.create_default_context()
 	try:
 		with smtplib.SMTP_SSL(config.SMTP_HOST, config.SMTP_PORT, context=context) as server:
-			server.login(config.SMTP_EMAIL, config.SMTP_PASSWORD)
+			server.login(config.SMTP_EMAIL, os.environ['EMAILING_SERVICE_PASSWORD'])
 			server.sendmail(config.SMTP_EMAIL, reciever, body)
 	except Exception as e:
 		print(e)
