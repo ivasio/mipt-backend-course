@@ -1,28 +1,29 @@
 import pika
 import smtplib
 import config
+import ssl
 
 
 def send_email(ch, method, properties, body):
 	confirmation_link = body.decode("utf-8")
 	reciever = confirmation_link.split('/')[-2]
-	#message = f"Here's your confirmation link : <a href=\"{confirmation_link}\">{confirmation_link}</a>"
 	message = f"Here's your confirmation link : {confirmation_link}"
 
-	FROM = "confirmation@gmail.com"
-	TO = "vanek.bboy@gmail.com"
-	 
-	body = "\r\n".join((
-	    "From: %s" % FROM,
-	    "To: %s" % TO,
-	    "Subject: Confirmation email" ,
-	    "",
-	    message
+	body = "\n".join((
+		"From: %s" % config.SMTP_EMAIL,
+		"To: %s" % reciever,
+		"Subject: Confirmation email" ,
+		"",
+		message
 	))
-	 
-	server = smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT)
-	server.sendmail(FROM, [TO], body)
-	server.quit()
+
+	context = ssl.create_default_context()
+	try:
+		with smtplib.SMTP_SSL(config.SMTP_HOST, config.SMTP_PORT, context=context) as server:
+			server.login(config.SMTP_EMAIL, config.SMTP_PASSWORD)
+			server.sendmail(config.SMTP_EMAIL, reciever, body)
+	except Exception as e:
+		print(e)
 
 
 def main():
